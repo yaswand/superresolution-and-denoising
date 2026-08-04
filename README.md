@@ -47,23 +47,5 @@ python train.py --root /path/to/train --resume ./checkpoints/last.pt
 - **Checkpointing** saves both `last.pt` (for resuming) and `best.pt`
   (tracked by validation PSNR) every epoch.
 
-## Sanity-tested
 
-This pipeline was smoke-tested end-to-end on a synthetic 20-pair dataset
-(64x64 GT / 32x32 NoisyLR with injected speckle+Gaussian noise) to confirm:
-shapes flow correctly through the model (128->256 style upsampling), the
-train/val loop runs without errors, PSNR/SSIM compute sensible values, and
-checkpoints save correctly. Swap in your real 3200-pair dataset directly —
-no code changes needed unless your actual resolution pair differs from
-256<->512 or 128<->256 (in which case re-run `verify_dims.py` and pass
-`--scale` accordingly).
 
-## Next steps you may want to add
-
-- Data augmentation (random flips/rotations — safe since they don't touch
-  pixel statistics or introduce handcrafted denoising).
-- TensorBoard or Weights & Biases logging.
-- Test-time ensembling (flip/rotate averaging) for the final submission.
-- If val PSNR plateaus, try increasing `base_ch` or adding perceptual loss
-  (with caution — the brief only requires L1, and perceptual losses can
-  hallucinate structure that may hurt on OOD semiconductor patterns).
