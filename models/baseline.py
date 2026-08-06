@@ -84,8 +84,7 @@ class Up(nn.Module):
         # Handle any off-by-one size mismatch from odd input dimensions.
         diff_h = skip.size(2) - x.size(2)
         diff_w = skip.size(3) - x.size(3)
-        x = F.pad(x, [diff_w // 2, diff_w - diff_w // 2,
-                      diff_h // 2, diff_h - diff_h // 2])
+        x = F.pad(x, [diff_w // 2, diff_w - diff_w // 2, diff_h // 2, diff_h - diff_h // 2])
 
         x = torch.cat([skip, x], dim=1)
         return self.conv(x)
@@ -100,7 +99,7 @@ class PixelShuffleUpsample(nn.Module):
 
     def __init__(self, in_ch: int, out_ch: int, scale: int = 2):
         super().__init__()
-        self.conv = nn.Conv2d(in_ch, out_ch * (scale ** 2), kernel_size=3, padding=1)
+        self.conv = nn.Conv2d(in_ch, out_ch * (scale**2), kernel_size=3, padding=1)
         self.shuffle = nn.PixelShuffle(scale)
         self.act = nn.ReLU(inplace=True)
 
@@ -121,8 +120,7 @@ class SRResidualUNet(nn.Module):
         scale: super-resolution factor (2 for this challenge).
     """
 
-    def __init__(self, in_channels: int = 1, out_channels: int = 1,
-                 base_ch: int = 64, scale: int = 2):
+    def __init__(self, in_channels: int = 1, out_channels: int = 1, base_ch: int = 64, scale: int = 2):
         super().__init__()
         self.scale = scale
 
@@ -154,29 +152,27 @@ class SRResidualUNet(nn.Module):
         # x: [B, 1, H, W]  (LR input)
 
         # --- Encoder ---
-        x1 = self.inc(x)          # [B, C,   H,   W]
-        x2 = self.down1(x1)       # [B, 2C,  H/2, W/2]
-        x3 = self.down2(x2)       # [B, 4C,  H/4, W/4]
-        x4 = self.down3(x3)       # [B, 8C,  H/8, W/8]
+        x1 = self.inc(x)  # [B, C,   H,   W]
+        x2 = self.down1(x1)  # [B, 2C,  H/2, W/2]
+        x3 = self.down2(x2)  # [B, 4C,  H/4, W/4]
+        x4 = self.down3(x3)  # [B, 8C,  H/8, W/8]
 
         # --- Bottleneck ---
         xb = self.bottleneck(x4)  # [B, 16C, H/8, W/8]
 
         # --- Decoder (skip connections align by matching spatial resolution) ---
-        d1 = self.up1(xb, x3)     # upsample H/8->H/4, concat skip x3 (H/4) -> [B, 8C, H/4, W/4]
-        d2 = self.up2(d1, x2)     # upsample H/4->H/2, concat skip x2 (H/2) -> [B, 4C, H/2, W/2]
-        d3 = self.up3(d2, x1)     # upsample H/2->H,   concat skip x1 (H)   -> [B, 2C, H,   W]
+        d1 = self.up1(xb, x3)  # upsample H/8->H/4, concat skip x3 (H/4) -> [B, 8C, H/4, W/4]
+        d2 = self.up2(d1, x2)  # upsample H/4->H/2, concat skip x2 (H/2) -> [B, 4C, H/2, W/2]
+        d3 = self.up3(d2, x1)  # upsample H/2->H,   concat skip x1 (H)   -> [B, 2C, H,   W]
 
-        feat = self.lr_out_conv(d3)   # [B, C, H, W]  back to LR spatial size
+        feat = self.lr_out_conv(d3)  # [B, C, H, W]  back to LR spatial size
 
         # --- Learned upsampling to HR ---
-        hr_feat = self.sr_head(feat)      # [B, C, 2H, 2W]
+        hr_feat = self.sr_head(feat)  # [B, C, 2H, 2W]
         residual = self.residual_conv(hr_feat)  # [B, 1, 2H, 2W]
 
         # --- Residual connection at HR resolution ---
-        upsampled_input = F.interpolate(
-            x, scale_factor=self.scale, mode="bilinear", align_corners=False
-        )
+        upsampled_input = F.interpolate(x, scale_factor=self.scale, mode="bilinear", align_corners=False)
         out = upsampled_input + residual
         return out
 

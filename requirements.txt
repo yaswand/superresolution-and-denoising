@@ -1,0 +1,14 @@
+# Core Machine Learning & Arrays
+torch>=2.0.0
+torchvision>=0.15.0
+numpy>=1.21.0
+
+# Configuration & Utilities
+PyYAML>=6.0
+
+# Image Processing & Visualization
+Pillow>=9.0.0
+matplotlib>=3.5.0
+
+# Optional (Uncomment if you set metrics.compute_lpips: true in default.yaml)
+# lpips>=0.1.4
