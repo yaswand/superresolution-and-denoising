@@ -1,0 +1,100 @@
+data:
+  root: "./train"
+  extensions: [".npy", ".png", ".jpg", ".jpeg"]
+  scale: 2
+  val_fraction: 0.1
+
+  # Exp 4 change: 96 -> 128
+  patch_size: 128
+
+  num_workers: 4
+  pin_memory: true
+
+augmentation:
+  horizontal_flip: true
+  vertical_flip: true
+  random_rotate90: true
+
+  # KEEP Exp 1 synthetic degradation augmentation
+  lr_gaussian_noise:
+    enabled: true
+    prob: 0.3
+    sigma_range: [0.0, 0.02]
+
+  lr_speckle_noise:
+    enabled: true
+    prob: 0.2
+    sigma_range: [0.0, 0.03]
+
+  lr_gaussian_blur:
+    enabled: true
+    prob: 0.15
+    kernel_size: 3
+    sigma_range: [0.1, 0.8]
+
+model:
+  name: "compact_restormer"
+  in_channels: 1
+  out_channels: 1
+  scale: 2
+
+  baseline:
+    base_ch: 64
+
+  compact_restormer:
+    embed_dim: 48
+    num_blocks: [2, 3, 3, 4]
+    num_refinement_blocks: 2
+    heads: [1, 2, 4, 8]
+    ffn_expansion_factor: 2.2
+    bias: false
+
+loss:
+  pixel_loss: "charbonnier"
+  charbonnier_eps: 1.0e-3
+
+  weights:
+    pixel: 1.0
+    ssim: 0.0
+    perceptual: 0.0
+
+  perceptual:
+    enabled: false
+    layers: ["relu1_2", "relu2_2", "relu3_3"]
+
+train:
+  epochs: 50
+  batch_size: 16
+  lr: 2.0e-4
+  weight_decay: 1.0e-4
+  optimizer: "adamw"
+
+  warmup_epochs: 3
+  min_lr: 1.0e-6
+
+  amp: true
+  grad_clip_norm: 1.0
+
+  seed: 42
+  early_stopping_patience: 15
+
+  checkpoint_dir: "./checkpoints_exp4_patch128"
+  log_dir: "./logs"
+  resume: null
+
+  val_interval: 1
+
+metrics:
+  # Training doesn't need LPIPS every epoch.
+  # Run LPIPS with the post-training evaluator.
+  compute_lpips: false
+  lpips_net: "alex"
+
+inference:
+  checkpoint: "./checkpoints_exp4_patch128/best.pt"
+  input_dir: "/path/to/test/NoisyLR"
+  output_dir: "./predictions"
+  batch_size: 8
+  amp: true
+  tile_size: 512
+  tile_overlap: 32

@@ -28,24 +28,46 @@ class SSIMLoss(nn.Module):
 
     def forward(self, pred, target):
         device = pred.device
-        kernel = self.kernel.to(device)
+        dtype = pred.dtype
+        kernel = self.kernel.to(device=device, dtype=dtype)
         pad = self.window_size // 2
 
-        dr = 1.0  # Approximate range for stability in loss
-        c1, c2 = (0.01 * dr) ** 2, (0.03 * dr) ** 2
+        batch_size = pred.shape[0]
+        losses = []
 
-        mu_p = F.conv2d(pred, kernel, padding=pad, groups=1)
-        mu_t = F.conv2d(target, kernel, padding=pad, groups=1)
+        for i in range(batch_size):
+            p = pred[i : i + 1]
+            t = target[i : i + 1]
 
-        sigma_p_sq = F.conv2d(pred * pred, kernel, padding=pad) - mu_p**2
-        sigma_t_sq = F.conv2d(target * target, kernel, padding=pad) - mu_t**2
-        sigma_pt = F.conv2d(pred * target, kernel, padding=pad) - mu_p * mu_t
+            # Use the actual GT data range, matching validation SSIM
+            dr = t.amax() - t.amin()
+            dr = torch.clamp(dr, min=1e-6)
 
-        num = (2 * mu_p * mu_t + c1) * (2 * sigma_pt + c2)
-        den = (mu_p**2 + mu_t**2 + c1) * (sigma_p_sq + sigma_t_sq + c2)
-        ssim_map = num / den
+            c1 = (0.01 * dr) ** 2
+            c2 = (0.03 * dr) ** 2
 
-        return 1.0 - ssim_map.mean()
+            mu_p = F.conv2d(p, kernel, padding=pad)
+            mu_t = F.conv2d(t, kernel, padding=pad)
+
+            mu_p_sq = mu_p**2
+            mu_t_sq = mu_t**2
+            mu_pt = mu_p * mu_t
+
+            sigma_p_sq = F.conv2d(p * p, kernel, padding=pad) - mu_p_sq
+
+            sigma_t_sq = F.conv2d(t * t, kernel, padding=pad) - mu_t_sq
+
+            sigma_pt = F.conv2d(p * t, kernel, padding=pad) - mu_pt
+
+            numerator = (2 * mu_pt + c1) * (2 * sigma_pt + c2)
+
+            denominator = (mu_p_sq + mu_t_sq + c1) * (sigma_p_sq + sigma_t_sq + c2)
+
+            ssim_map = numerator / denominator
+
+            losses.append(1.0 - ssim_map.mean())
+
+        return torch.stack(losses).mean()
 
 
 class RestorationLoss(nn.Module):

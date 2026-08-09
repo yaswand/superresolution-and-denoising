@@ -1,0 +1,41 @@
+{
+  "checkpoint": "checkpoints_exp3/best.pt",
+  "config": "configs/exp3_no_lr_degradation.yaml",
+  "epoch": 46,
+  "n_val_samples": 320,
+  "lpips_enabled": true,
+  "lpips_net": "alex",
+  "id": {
+    "psnr": 27.796850538253786,
+    "ssim": 0.7550503686070442,
+    "lpips": 0.2973501931875944,
+    "n_samples": 320
+  },
+  "ood": {
+    "ood_gaussian": {
+      "psnr": 26.11517778933048,
+      "ssim": 0.6567169912159443,
+      "lpips": 0.3545926874270663,
+      "n_samples": 320
+    },
+    "ood_speckle": {
+      "psnr": 27.41679114699364,
+      "ssim": 0.7450418260879814,
+      "lpips": 0.2954012387432158,
+      "n_samples": 320
+    },
+    "ood_blur": {
+      "psnr": 25.37269035875797,
+      "ssim": 0.6317746028769762,
+      "lpips": 0.6413425533100963,
+      "n_samples": 320
+    },
+    "ood_mixed": {
+      "psnr": 25.15214770138264,
+      "ssim": 0.6035008432809263,
+      "lpips": 0.5467479179613293,
+      "n_samples": 320
+    }
+  },
+  "elapsed_seconds": 16.659115076065063
+}

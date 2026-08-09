@@ -1,0 +1,41 @@
+{
+  "checkpoint": "checkpoints_exp4_patch128/best.pt",
+  "config": null,
+  "epoch": 49,
+  "n_val_samples": 320,
+  "lpips_enabled": true,
+  "lpips_net": "alex",
+  "id": {
+    "psnr": 27.78348026275635,
+    "ssim": 0.7526828661561012,
+    "lpips": 0.30309091955423356,
+    "n_samples": 320
+  },
+  "ood": {
+    "ood_gaussian": {
+      "psnr": 26.379906430840492,
+      "ssim": 0.6731035738252104,
+      "lpips": 0.3492067165207118,
+      "n_samples": 320
+    },
+    "ood_speckle": {
+      "psnr": 27.455132952332498,
+      "ssim": 0.7448195899836719,
+      "lpips": 0.3011946790618822,
+      "n_samples": 320
+    },
+    "ood_blur": {
+      "psnr": 25.258235079050063,
+      "ssim": 0.6248102187877521,
+      "lpips": 0.6272991451900453,
+      "n_samples": 320
+    },
+    "ood_mixed": {
+      "psnr": 25.19624321460724,
+      "ssim": 0.6076066604582593,
+      "lpips": 0.5434552320744842,
+      "n_samples": 320
+    }
+  },
+  "elapsed_seconds": 1431.7280094623566
+}

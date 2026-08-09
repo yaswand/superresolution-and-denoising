@@ -10,5 +10,4 @@ PyYAML>=6.0
 Pillow>=9.0.0
 matplotlib>=3.5.0
 
-# Optional (Uncomment if you set metrics.compute_lpips: true in default.yaml)
-# lpips>=0.1.4
+lpips>=0.1.4

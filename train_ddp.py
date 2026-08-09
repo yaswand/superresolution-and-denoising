@@ -9,6 +9,7 @@ Usage:
 """
 
 import argparse
+import json
 import os
 import time
 
@@ -24,6 +25,7 @@ from models import build_model
 from losses import RestorationLoss
 from metrics import compute_psnr, compute_ssim
 from utils import load_config, set_seed
+from evaluate import run_full_evaluation
 
 
 def get_device() -> torch.device:
@@ -348,6 +350,36 @@ def main():
 
         if distributed:
             dist.barrier()
+
+    # --- Post-training evaluation: ID + deterministic OOD, PSNR/SSIM/LPIPS ---
+    # Runs once, on the main process only, single-device, against the best
+    # checkpoint saved above. This does not change training itself (loss/
+    # optimizer/scheduler/DDP are all already finished by this point) --
+    # it just produces the reproducible eval artifact the ablation compares.
+    if is_main_process():
+        best_ckpt_path = os.path.join(checkpoint_dir, "best.pt")
+        if os.path.isfile(best_ckpt_path):
+            eval_device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+            print(f"\nRunning post-training ID + OOD evaluation on {best_ckpt_path} ...")
+            try:
+                results = run_full_evaluation(
+                    checkpoint_path=best_ckpt_path,
+                    config_path=None,  # use the cfg embedded in the checkpoint
+                    device=eval_device,
+                    compute_lpips=cfg.get("metrics", {}).get("compute_lpips", False),
+                    lpips_net=cfg.get("metrics", {}).get("lpips_net", "alex"),
+                    batch_size=cfg["train"]["batch_size"],
+                    num_workers=cfg["data"]["num_workers"],
+                )
+                results_path = os.path.join(checkpoint_dir, "eval_best.json")
+                with open(results_path, "w") as f:
+                    json.dump(results, f, indent=2)
+                print(f"Saved ID + OOD evaluation results to {results_path}")
+            except Exception as e:
+                # Evaluation is a reporting step; a failure here (e.g. missing
+                # LPIPS weights / no network) must not be mistaken for a
+                # training failure, so we log and continue rather than raise.
+                print(f"[train_ddp] Post-training evaluation failed, skipping: {e}")
 
     cleanup_distributed()
 

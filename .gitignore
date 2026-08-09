@@ -5,3 +5,4 @@ Test_NoisyLR/
 GT/
 NoisyLR/
 *.zip
+__pycache__/

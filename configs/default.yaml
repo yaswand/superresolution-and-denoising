@@ -114,7 +114,7 @@ loss:
 # Training
 # ---------------------------------------------------------------------------
 train:
-  epochs: 100
+  epochs: 50
   batch_size: 16
   lr: 2.0e-4
   weight_decay: 1.0e-4
@@ -132,7 +132,7 @@ train:
   # Stop if val PSNR doesn't improve for this many epochs. Set to null to disable.
   early_stopping_patience: 15
 
-  checkpoint_dir: "./checkpoints"
+  checkpoint_dir: "./checkpoints_exp2"
   log_dir: "./logs"
   resume: null
 

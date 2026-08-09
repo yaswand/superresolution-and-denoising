@@ -1,0 +1,41 @@
+{
+  "checkpoint": "checkpoints_exp1/best.pt",
+  "config": "configs/exp1_charbonnier.yaml",
+  "epoch": 46,
+  "n_val_samples": 320,
+  "lpips_enabled": true,
+  "lpips_net": "alex",
+  "id": {
+    "psnr": 27.776252889633177,
+    "ssim": 0.7540042206645012,
+    "lpips": 0.30042415149509905,
+    "n_samples": 320
+  },
+  "ood": {
+    "ood_gaussian": {
+      "psnr": 26.255526086688043,
+      "ssim": 0.6671347289346159,
+      "lpips": 0.35330824872944505,
+      "n_samples": 320
+    },
+    "ood_speckle": {
+      "psnr": 27.397826167941094,
+      "ssim": 0.7440604739822447,
+      "lpips": 0.30168050995562223,
+      "n_samples": 320
+    },
+    "ood_blur": {
+      "psnr": 25.379278320074082,
+      "ssim": 0.6291464051813819,
+      "lpips": 0.6246044906321913,
+      "n_samples": 320
+    },
+    "ood_mixed": {
+      "psnr": 25.19047690629959,
+      "ssim": 0.6059404818573967,
+      "lpips": 0.5412185601890087,
+      "n_samples": 320
+    }
+  },
+  "elapsed_seconds": 19.064595937728882
+}
