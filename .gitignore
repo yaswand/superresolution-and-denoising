@@ -6,3 +6,5 @@ GT/
 NoisyLR/
 *.zip
 __pycache__/
+kaggle_code/
+*.ps1

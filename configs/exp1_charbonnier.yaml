@@ -102,7 +102,6 @@ train:
   val_interval: 1
 
 metrics:
-  compute_lpips: false
   lpips_net: "alex"
 
 inference:

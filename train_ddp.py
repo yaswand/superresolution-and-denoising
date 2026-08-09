@@ -226,7 +226,9 @@ def main():
     )
 
     if distributed:
-        train_sampler = DistributedSampler(train_ds, num_replicas=world_size, rank=get_rank(), shuffle=True, drop_last=True)
+        train_sampler = DistributedSampler(
+            train_ds, num_replicas=world_size, rank=get_rank(), shuffle=True, drop_last=True
+        )
         val_subset = build_eval_subset(val_ds, get_rank(), world_size)
         val_sampler = None
     else:
@@ -366,7 +368,6 @@ def main():
                     checkpoint_path=best_ckpt_path,
                     config_path=None,  # use the cfg embedded in the checkpoint
                     device=eval_device,
-                    compute_lpips=cfg.get("metrics", {}).get("compute_lpips", False),
                     lpips_net=cfg.get("metrics", {}).get("lpips_net", "alex"),
                     batch_size=cfg["train"]["batch_size"],
                     num_workers=cfg["data"]["num_workers"],

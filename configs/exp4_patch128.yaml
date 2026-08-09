@@ -85,9 +85,6 @@ train:
   val_interval: 1
 
 metrics:
-  # Training doesn't need LPIPS every epoch.
-  # Run LPIPS with the post-training evaluator.
-  compute_lpips: false
   lpips_net: "alex"
 
 inference:

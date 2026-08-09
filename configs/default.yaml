@@ -143,7 +143,6 @@ train:
 # Metrics
 # ---------------------------------------------------------------------------
 metrics:
-  compute_lpips: false   # requires `lpips` package; see requirements.txt
   lpips_net: "alex"
 
 # ---------------------------------------------------------------------------
