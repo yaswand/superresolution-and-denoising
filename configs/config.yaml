@@ -1,0 +1,76 @@
+# =============================================================================
+# config_converted.yaml
+#
+# Converted configuration file mapping the original parameters to the 
+# structured exp1_charbonnier.yaml format.
+# =============================================================================
+
+data:
+  root: "train"
+  val_fraction: 0.15
+  patch_size: 96
+  num_workers: 0
+  pin_memory: true
+  
+  # Custom data properties from original config
+  split_mode: hash_group
+  synthetic_probability: 0.55
+  scale4_probability: 0.15
+  scale_choices: [2, 4]
+
+augmentation:
+  lr_gaussian_noise:
+    enabled: true
+    prob: 1.0 # Applied uniformly in original config via scale/prob arrays
+    sigma_range: [0.0, 0.04]
+
+  lr_speckle_noise:
+    enabled: true
+    prob: 1.0
+    sigma_range: [0.0, 0.12]
+
+model:
+  name: "compact_restormer"
+  scale: 2
+
+  compact_restormer:
+    embed_dim: 128
+    depth: 8
+    heads: 4
+    window_size: 8
+    mlp_ratio: 4.0
+    noise_conditioning: true
+
+loss:
+  pixel_loss: "charbonnier"
+  
+  weights:
+    pixel: 0.5        # Maps to original 'charbonnier' value
+    ssim: 0.2         # Maps to original 'ms_ssim' value
+    gradient: 0.4
+    focal_frequency: 0.1
+    perceptual: 0.05
+
+  focal_settings:
+    beta: 2.0
+
+  perceptual:
+    enabled: false    # enable only when pretrained VGG weights are locally available
+
+train:
+  epochs: 60
+  batch_size: 8
+  lr: 0.0002
+  fine_tune_lr: 0.00005
+  weight_decay: 0.0001
+  
+  warmup_epochs: 15
+  warmup_steps: 500
+  
+  amp: true
+  grad_clip_norm: 1.0
+
+  seed: 42
+
+  checkpoint_dir: "checkpoints"
+  val_interval: 1

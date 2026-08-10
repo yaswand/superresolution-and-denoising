@@ -141,7 +141,7 @@ def main():
     parser.add_argument(
         "--checkpoint",
         type=str,
-        default="./checkpoints/best.pt",
+        default="./checkpoints_exp4patch128/best.pt",
         help="Checkpoint path (default: ./checkpoints/best.pt)",
     )
     parser.add_argument("--n_samples", type=int, default=8)

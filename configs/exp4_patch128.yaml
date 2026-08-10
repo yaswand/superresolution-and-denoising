@@ -63,7 +63,7 @@ loss:
     layers: ["relu1_2", "relu2_2", "relu3_3"]
 
 train:
-  epochs: 50
+  epochs: 100
   batch_size: 16
   lr: 2.0e-4
   weight_decay: 1.0e-4

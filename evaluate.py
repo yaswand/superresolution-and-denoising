@@ -55,8 +55,8 @@ except ImportError:
 from dataset import IMAGE_EXTENSIONS, _load_array, make_train_val_split
 from metrics import compute_psnr, compute_ssim
 from models import build_model
-from ood import apply_ood_variant, variant_names
-from ood_permutations import (
+from evaluation.ood import apply_ood_variant, variant_names
+from evaluation.ood_permutations import (
     ALL_PERMUTATIONS,
     apply_permutation,
     order_key,
@@ -787,7 +787,7 @@ def run_full_evaluation(
     overlap = cfg.get("inference", {}).get("tile_overlap", 32)
     scale = int(cfg["model"].get("scale", 2))
 
-    from lpips_metric import try_build_lpips
+    from evaluation.lpips_metric import try_build_lpips
 
     lpips_enabled = _resolve_lpips_enabled(cfg, compute_lpips)
     lpips_net = _resolve_lpips_net(cfg, lpips_net)
