@@ -1,0 +1,42 @@
+seed: 42
+data:
+  root: train
+  patch_size: 96
+  val_fraction: 0.15
+  split_mode: hash_group  # prefix_group if filenames encode structure groups
+  # Windows multiprocessing can exhaust shared-memory mappings (error 1455).
+  # Keep this at 0 for reliable training; raise it only if your system supports it.
+  workers: 0
+  synthetic_probability: 0.55
+  speckle_sigma: [0.0, 0.12]
+  gaussian_sigma: [0.0, 0.04]
+  scale_choices: [2, 4]
+  scale4_probability: 0.15
+model:
+  scale: 2
+  embed_dim: 128 
+  depth: 8
+  heads: 4
+  window_size: 8
+  mlp_ratio: 4.0
+  noise_conditioning: true
+loss:
+  charbonnier: 0.5
+  ms_ssim: 0.2
+  gradient: 0.4
+  focal_frequency: 0.1
+  focal_beta: 2.0
+  perceptual: 0.05
+  perceptual_enabled: false # enable only when pretrained VGG weights are locally available
+training:
+  epochs: 60
+  warmup_epochs: 15
+  batch_size: 8
+  lr: 0.0002
+  fine_tune_lr: 0.00005
+  weight_decay: 0.0001
+  warmup_steps: 500
+  grad_clip: 1.0
+  validate_every: 1
+  amp: true
+  checkpoint_dir: checkpoints
